@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidVibe - Satire-TikTok</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+        }
+
+        .video-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .upload-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Passwort-Formular */
+        .password-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .password-form {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .password-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .password-input {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+        }
+
+        .password-submit {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .password-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .control-btn {
+            position: absolute;
+            top: 70px;
+            /* Abstand unter Plus-Button */
+            right: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #shareBtn {
+            top: 130px;
+        }
+
+        /* Abstand für Teilen-Button */
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        video {
+            max-width: 100vw;
+            max-height: 100vh;
+            object-fit: cover;
+        }
+
+        /* Querformat-Optimierung */
+        @media screen and (orientation: landscape) {
+            video {
+                width: auto;
+                height: 100vh;
+            }
+        }
+
+        /* Hochformat */
+        @media screen and (orientation: portrait) {
+            video {
+                width: 100vw;
+                height: auto;
+            }
+        }
+
+        .unmute-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+            /* Standardmäßig ausgeblendet */
+            z-index: 10;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            /* Standardmäßig ausgeblendet */
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-overlay button {
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* .video-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; } */
+        /* video { max-width: 100vw; max-height: 100vh; object-fit: cover; display: block; } */
+        .controls {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 5px;
+            background: gray;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress {
+            height: 100%;
+            background: red;
+            width: 0;
+        }
+
+        .time {
+            color: white;
+            margin: 0 10px;
+        }
+
+        .volume-slider {
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="video-container" id="videoContainer">
+        <video id="video" src=""></video>
+    </div>
+
+    <div id="videoOverlay" class="video-overlay">
+        <button id="playPauseBtn">⏸</button>
+        <div class="controls">
+            <span id="currentTime" class="time">0:00</span>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <span id="duration" class="time">0:00</span>
+            <input type="range" id="volume" class="volume-slider" min="0" max="1" step="0.1" value="1">
+        </div>
+    </div>
+
+    <!-- Upload Button (hinter dem Overlay) -->
+    <label class="upload-btn">➕
+        <input type="file" id="fileInput" accept="video/,*image/*" capture="environment">
+    </label>
+
+    <!-- Overlay, der den Upload-Button blockiert -->
+    <div id="passwordOverlay" class="password-overlay"></div>
+
+    <!-- Vollbild-Button -->
+    <button id="fullscreenBtn" class="control-btn">🔲</button>
+
+    <!-- Teilen-Button -->
+    <button id="shareBtn" class="control-btn">🔗</button>
+
+    <!-- Entmute-Button -->
+    <button id="unmuteBtn" class="unmute-btn">🔊 Ton an</button>
+
+    <!-- Passwort-Formular -->
+    <div class="password-form" id="passwordForm">
+        <div class="password-container">
+            <button class="password-close" id="passwordClose">X</button>
+            <h3>Passwort eingeben</h3>
+            <input type="password" id="passwordInput" class="password-input" placeholder="Passwort">
+            <button class="password-submit" id="passwordSubmit">Einloggen</button>
+        </div>
+    </div>
+
+    <script>
+
+        const video = document.getElementById('video');
+        const progressBar = document.getElementById('progressBar');
+        const progress = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volume');
+
+        video.src = 'videos/sample.mp4';
+        video.addEventListener('loadedmetadata', () => {
+            durationEl.textContent = formatTime(video.duration);
+        });
+
+        video.addEventListener('timeupdate', () => {
+            currentTimeEl.textContent = formatTime(video.currentTime);
+            const percent = (video.currentTime / video.duration) * 100;
+            progress.style.width = percent + '%';
+        });
+
+        progressBar.addEventListener('click', (e) => {
+            const rect = progressBar.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            video.currentTime = percent * video.duration;
+            showOverlay();
+        });
+
+        volumeSlider.addEventListener('input', () => {
+            video.volume = volumeSlider.value;
+            showOverlay();
+        });
+
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Overlay-Events
+        const overlay = document.getElementById('videoOverlay');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+
+        function showOverlay() {
+            overlay.style.display = 'flex';
+            overlay.style.opacity = '1';
+
+            // Overlay nach 2 Sekunden wieder ausblenden
+            clearTimeout(hideOverlayTimeout);
+            hideOverlayTimeout = setTimeout(() => {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 300);
+            }, 2000);
+        }
+
+        // Video antippen → Overlay einblenden
+        video.addEventListener('click', showOverlay);
+
+        // Play/Pause steuern
+        playPauseBtn.onclick = () => {
+            if (video.paused) {
+                video.play();
+                playPauseBtn.textContent = '⏸';
+            } else {
+                video.pause();
+                playPauseBtn.textContent = '▶️';
+            }
+            showOverlay(); // Overlay bleibt sichtbar
+        };
+
+        function adjustVideoSize() {
+            const video = document.querySelector("video");
+            if (!video) return;
+
+            if (window.innerWidth > window.innerHeight) {
+                // Querformat: Höhe fix, Breite passt sich an
+                video.style.width = "auto";
+                video.style.height = "100vh";
+            } else {
+                // Hochformat: Breite fix, Höhe passt sich an
+                video.style.width = "100vw";
+                video.style.height = "auto";
+            }
+
+            // Zentrierung sicherstellen
+            video.style.position = "absolute";
+            video.style.top = "50%";
+            video.style.left = "50%";
+            video.style.transform = "translate(-50%, -50%)";
+        }
+
+        // Eventlistener für Größenänderung
+        window.addEventListener("resize", adjustVideoSize);
+        window.addEventListener("load", adjustVideoSize);
+
+        // Vollbildmodus aktivieren
+        // Vollbildmodus an/aus
+        document.getElementById('fullscreenBtn').addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                // Vollbild aktivieren
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                // Vollbild verlassen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        });
+
+        // Teilen-Funktion
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            if (videos.length === 0) return;
+
+            const videoId = videos[currentIndex];
+            const shareUrl = `${window.location.origin}${window.location.pathname}?videoid=${videoId}`;
+
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert("Link kopiert: " + shareUrl);
+            }).catch(err => {
+                console.error("Kopieren fehlgeschlagen:", err);
+            });
+        });
+
+
+        // GET-Parameter auslesen und Video setzen
+        function getVideoFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const videoId = urlParams.get('videoid');
+
+            if (videoId && videos.includes(videoId)) {
+                showVideo(videos.indexOf(videoId));
+            } else {
+                showVideo(0);
+            }
+        }
+
+        // Videos laden und GET-Parameter checken
+        async function loadVideos() {
+            try {
+                const response = await fetch('v_index.json', {
+                    cache: "no-store" // Kein Caching erlaubt
+                });
+                const data = await response.json();
+                videos = data.videos || [];
+
+                if (videos.length > 0) {
+                    getVideoFromUrl(); // Springe zu Video aus GET-Parameter
+                }
+            } catch (error) {
+                console.error('Fehler beim Laden der Videos:', error);
+            }
+        }
+
+        let videos = [];
+        let currentIndex = 0;
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        /*
+                async function loadVideos() {
+                    try {
+                        const response = await fetch('v_index.json');
+                        const data = await response.json();
+                        videos = data.videos || [];
+                        if (videos.length > 0) showVideo(0);
+                    } catch (error) {
+                        console.error('Fehler beim Laden der Videos:', error);
+                    }
+                }
+        */
+        let autoplayWithSound = false; // Variable statt sessionStorage
+        let hideOverlayTimeout; // Timeout für das automatische Verstecken
+
+        function showVideo(index) {
+            if (index < 0 || index >= videos.length) return;
+
+            const container = document.getElementById('videoContainer');
+            //container.innerHTML = '';
+
+            //const video = document.createElement('video');
+            const video = document.getElementById('video');
+            video.src = `videos/${videos[index]}`;
+            video.autoplay = true;
+            video.loop = false;
+            video.muted = !autoplayWithSound;
+            video.controls = false;
+            video.style.display = 'block';
+
+            // Falls noch nicht entmutet, Button anzeigen
+            if (video.muted) {
+                document.getElementById('unmuteBtn').style.display = 'block';
+            } else {
+                document.getElementById('unmuteBtn').style.display = 'none';
+            }
+
+            video.onended = () => nextVideo(1);
+            container.appendChild(video);
+
+            currentIndex = index;
+
+            video.play();
+
+            document.getElementById('unmuteBtn').onclick = () => {
+                video.muted = false; // Ton aktivieren
+                autoplayWithSound = true; // Variable setzen → gilt für alle Videos bis Reload
+                document.getElementById('unmuteBtn').style.display = 'none'; // Button ausblenden
+            };
+
+            // Initial Overlay verstecken
+            overlay.style.display = 'none';
+        }
+
+        function nextVideo(direction) {
+            let newIndex = currentIndex + direction;
+            if (newIndex >= 0 && newIndex < videos.length) {
+                showVideo(newIndex);
+            }
+        }
+
+        // Scroll-Steuerung mit dem Mausrad
+        document.addEventListener('wheel', (event) => {
+            const direction = event.deltaY > 0 ? 1 : -1;
+            nextVideo(direction);
+        });
+
+        // Touch-Gesten für Mobilgeräte
+        document.addEventListener("touchstart", (event) => {
+            touchStartY = event.touches[0].clientY;
+        });
+
+        document.addEventListener("touchend", (event) => {
+            touchEndY = event.changedTouches[0].clientY;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchStartY - touchEndY > swipeThreshold) {
+                nextVideo(1);
+            } else if (touchEndY - touchStartY > swipeThreshold) {
+                nextVideo(-1);
+            }
+        }
+
+        // Passwort-Login
+        // Passwort-Overlay klickbar machen
+        document.getElementById('passwordOverlay').addEventListener('click', function () {
+            document.getElementById('passwordForm').style.display = 'flex';
+        });
+
+        // Passwort-Formular schließen
+        document.getElementById('passwordClose').addEventListener('click', function () {
+            document.getElementById('passwordForm').style.display = 'none';
+        });
+
+        // Passwort eingeben
+        document.getElementById('passwordSubmit').addEventListener('click', function () {
+            const enteredPassword = document.getElementById('passwordInput').value;
+
+            // Passwort speichern & Overlay entfernen
+            localStorage.setItem('uploadPassword', enteredPassword);
+
+            localStorage.setItem('passwordEntered', 'true');
+            document.getElementById('passwordForm').style.display = 'none';
+            document.getElementById('passwordOverlay').style.display = 'none';
+        });
+
+        // Prüfen, ob Passwort schon gespeichert ist
+        if (localStorage.getItem('passwordEntered')) {
+            document.getElementById('passwordOverlay').style.display = 'none';
+        }
+
+
+        // Datei-Upload
+        document.getElementById('fileInput').addEventListener('change', async function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('video', file);
+            // Passwort aus dem localStorage holen
+            const storedPassword = localStorage.getItem('uploadPassword');
+            if (storedPassword) {
+                formData.append('password', storedPassword);
+            }
+
+            try {
+                const response = await fetch('upload.php', { method: 'POST', body: formData });
+                const result = await response.json();
+                alert(result.success || result.error);
+                if (result.error == "Falsches Passwort") {
+                    localStorage.removeItem('passwordEntered');
+                    localStorage.removeItem('uploadPassword');
+                    document.getElementById('passwordForm').style.display = 'flex';
+                    document.getElementById('passwordOverlay').style.display = 'flex';
+                }
+            } catch (error) {
+                alert('Upload fehlgeschlagen.');
+            }
+        });
+
+        loadVideos();
+    </script>
+
+</body>
+
+</html>
